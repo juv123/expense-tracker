@@ -1,8 +1,8 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\CategoryController;
-use App\Http\Controllers\ExpenseController;
+use App\Http\Controllers\Api\CategoryController;
+use App\Http\Controllers\Api\ExpenseController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Middleware\CorsMiddleware;
 
@@ -22,16 +22,17 @@ Route::get('categories/{id}/edit',[CategoryController::class,'edit'])->name('cat
 Route::put('categories/{id}/edit',[CategoryController::class,'update'])->name('categories.update');
 Route::delete('categories/{id}/delete', [CategoryController::class, 'delete'])->name('categories.delete');
 
-
+Route::get('categories/fetch', [CategoryController::class, 'fetch'])->withoutMiddleware([\App\Http\Middleware\VerifyCsrfToken::class]);
+Route::get('expenses', [ExpenseController::class, 'index'])->withoutMiddleware([\App\Http\Middleware\VerifyCsrfToken::class]);
+Route::post('expenses/create', [ExpenseController::class, 'create'])->withoutMiddleware([\App\Http\Middleware\VerifyCsrfToken::class]);   
+Route::delete('expenses/{id}/delete', [ExpenseController::class, 'delete'])->withoutMiddleware([\App\Http\Middleware\VerifyCsrfToken::class]);
+Route::get('expenses/summary', [ExpenseController::class, 'summarizeExpenses'])->withoutMiddleware([\App\Http\Middleware\VerifyCsrfToken::class]);
+    
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-Route::get('categories/fetch', [CategoryController::class, 'fetch']);
-Route::get('expenses', [ExpenseController::class, 'index']);
-Route::post('expenses/create', [ExpenseController::class, 'create']) ;   
-Route::delete('expenses/{id}/delete', [ExpenseController::class, 'delete']);
-Route::get('expenses/summary', [ExpenseController::class, 'summarizeExpenses']);
+
 });
 
 require __DIR__.'/auth.php';
